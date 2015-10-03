@@ -1,9 +1,9 @@
-var app = angular.module("myApp", ['uiGmapgoogle-maps']);
+var app = angular.module("weatherApp", ['uiGmapgoogle-maps']);
 
 app.controller('MainController', function ($scope, $http, $document, uiGmapGoogleMapApi, uiGmapIsReady, $timeout, $window) {
   var main = this;
-  var marker, map, mapContainerEl, myLatLng;
-  var isLargeMap = true;
+  var marker, map, mapElement, myLatLng;
+  var isMapLarge = true;
 
   this.showMap = false;
   this.count = 7;
@@ -30,12 +30,11 @@ app.controller('MainController', function ($scope, $http, $document, uiGmapGoogl
   };
 
   this.changeMapSize = function () {
-    var mapElement = angular.element(document.getElementsByClassName('angular-google-map-container')[0]);
 
-    var multiplier = isLargeMap ? 0.3 : 0.7;
-    isLargeMap = !isLargeMap;
+    var multiplier = isMapLarge ? 0.28 : 0.7;
+    isMapLarge = !isMapLarge;
 
-    var newHeight = $window.outerHeight * multiplier;
+    var newHeight = parseInt($window.outerHeight * multiplier);
     mapElement.css('height', newHeight + 'px');
 
     $timeout(function () {
@@ -61,6 +60,7 @@ app.controller('MainController', function ($scope, $http, $document, uiGmapGoogl
     console.log('isReady');
     instances.forEach(function (inst) {
       map = inst.map;
+      mapElement = angular.element(document.getElementsByClassName('angular-google-map-container')[0]);
       main.changeMapSize();
       placeMarker();
     });
