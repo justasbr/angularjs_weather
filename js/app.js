@@ -1,35 +1,19 @@
-var app = angular.module("myApp", ['ngMap']);
+var app = angular.module("myApp", ['uiGmapgoogle-maps']);
 
-app.controller('MainController', ['$scope', '$http', function ($scope, $http) {
-  $scope.cnt = 7;
-  $scope.lat = 0;
-  $scope.lon = 0;
-  $scope.zoom = 11;
-  $scope.queryURL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=" +
-    $scope.city + "&mode=json&units=metric&cnt=" + $scope.cnt;
+app.controller('MainController', function ($scope, $http, $document, uiGmapGoogleMapApi, uiGmapIsReady, $timeout, $window) {
+  var main = this;
+  var marker, map, mapContainerEl, myLatLng;
+  var isLargeMap = true;
 
-  $http.get($scope.queryURL).
-    success(function (data) {
-      $scope.weather = data;
-    });
+  this.showMap = false;
+  this.count = 7;
 
-  $scope.refreshData = function (newCity) {
-    $scope.queryURL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=" +
-      $scope.cityInput + "&mode=json&units=metric&cnt=" + $scope.cnt;
-    $http.get($scope.queryURL).
-      success(function (data) {
-        $scope.weather = data;
-        $scope.city = $scope.weather.city.name;
-        $scope.lat = $scope.weather.city.coord.lat;
-        $scope.lon = $scope.weather.city.coord.lon;
-        $scope.placeMarker();
-      });
-  };
+  $scope.map = {center: {latitude: 0, longitude: 0}, zoom: 11, events: {click: getClickedLocation}};
 
+  function getClickedLocation(map, event, data) {
+    getDataByLocation(data[0].latLng.H, data[0].latLng.L);
+  }
 
-  $scope.double = new function (num) {
-    return 2 * num;
-  };
   $scope.getDirection = function (deg) {
     if (deg <= 45 || deg >= 315) {
       return "North";
@@ -43,35 +27,79 @@ app.controller('MainController', ['$scope', '$http', function ($scope, $http) {
     else if (deg >= 225 && deg <= 315) {
       return "West";
     }
-    return "unknown";
   };
-  var marker;
-  var map;
-  $scope.$on('mapInitialized', function (evt, evtMap) {
-    map = evtMap;
-    $scope.placeMarker = function () {
+
+  this.changeMapSize = function () {
+    var mapElement = angular.element(document.getElementsByClassName('angular-google-map-container')[0]);
+
+    var multiplier = isLargeMap ? 0.3 : 0.7;
+    isLargeMap = !isLargeMap;
+
+    var newHeight = $window.outerHeight * multiplier;
+    mapElement.css('height', newHeight + 'px');
+
+    $timeout(function () {
+      google.maps.event.trigger(map, "resize");
+      map.panTo(myLatLng);
+    }, 400);
+  };
+
+  function placeMarker() {
+    if (map) {
       myLatLng = new google.maps.LatLng($scope.lat, $scope.lon);
       if (marker) {
-        marker.setMap(null); //so only 1 marker at a time
+        marker.setMap(null); //removes previous marker from the map
       }
       marker = new google.maps.Marker({position: myLatLng, map: map});
       map.panTo(myLatLng);
-    };
-    $scope.refreshDataOnLocation = function (e) {
-      fLat = e.latLng.lat();
-      fLng = e.latLng.lng();
-      $scope.queryURL = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" +
-        fLat + "&lon=" + fLng + "&mode=json&units=metric&cnt=" + $scope.cnt;
-      $http.get($scope.queryURL).
-        success(function (data) {
-          $scope.weather = data;
-          $scope.city = $scope.weather.city.name;
-          $scope.lat = $scope.weather.city.coord.lat;
-          $scope.lon = $scope.weather.city.coord.lon;
-          $scope.placeMarker();
-        });
-    };
+    }
+  }
+
+  uiGmapGoogleMapApi.then(getLocation);
+
+  uiGmapIsReady.promise(1).then(function (instances) {
+    console.log('isReady');
+    instances.forEach(function (inst) {
+      map = inst.map;
+      main.changeMapSize();
+      placeMarker();
+    });
   });
 
+  function getDataByLocation(lat, lng) {
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=" +
+      lat + "&lon=" + lng + "&mode=json&units=metric&cnt=" + main.count;
+    $http.get(queryURL).then(function (data) {
+      main.showMap = true;
+      $scope.weather = data.data;
+      $scope.city = $scope.weather.city.name;
+      $scope.lat = $scope.weather.city.coord.lat;
+      $scope.lon = $scope.weather.city.coord.lon;
+      placeMarker();
+    });
+  }
 
-}]);
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        getDataByLocation(pos.coords.latitude, pos.coords.longitude);
+      }, function () {
+        console.log("Could not get user's location");
+      })
+    }
+  }
+
+  this.getDataByCityName = function () {
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=" +
+      main.cityInput + "&mode=json&units=metric&cnt=" + main.count;
+    $http.get(queryURL).then(function (data) {
+      main.showMap = true;
+      $scope.weather = data.data;
+      $scope.city = $scope.weather.city.name;
+      $scope.lat = $scope.weather.city.coord.lat;
+      $scope.lon = $scope.weather.city.coord.lon;
+      placeMarker();
+    });
+  };
+
+});

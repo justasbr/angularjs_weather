@@ -1,0 +1,53 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'http-server', '-g' ]
+2 info using npm@2.13.3
+3 info using node@v0.10.25
+4 verbose node symlink /usr/bin/node
+5 verbose install initial load of /usr/lib/package.json
+6 verbose readDependencies loading dependencies from /usr/lib/package.json
+7 silly cache add args [ 'http-server', null ]
+8 verbose cache add spec http-server
+9 silly cache add parsed spec { raw: 'http-server',
+9 silly cache add   scope: null,
+9 silly cache add   name: 'http-server',
+9 silly cache add   rawSpec: '',
+9 silly cache add   spec: '*',
+9 silly cache add   type: 'range' }
+10 silly addNamed http-server@*
+11 verbose addNamed "*" is a valid semver range for http-server
+12 silly addNameRange { name: 'http-server', range: '*', hasData: false }
+13 silly mapToRegistry name http-server
+14 silly mapToRegistry using default registry
+15 silly mapToRegistry registry http://repo.dev.wix/artifactory/api/npm/npm-repos
+16 silly mapToRegistry uri http://repo.dev.wix/artifactory/api/npm/npm-repos/http-server
+17 verbose addNameRange registry:http://repo.dev.wix/artifactory/api/npm/npm-repos/http-server not in flight; fetching
+18 verbose request uri http://repo.dev.wix/artifactory/api/npm/npm-repos/http-server
+19 verbose request no auth needed
+20 info attempt registry request try #1 at 16:44:47
+21 verbose request id 17ab6d24e4c71405
+22 http request GET http://repo.dev.wix/artifactory/api/npm/npm-repos/http-server
+23 info retry will retry, error on last attempt: Error: getaddrinfo ENOTFOUND
+24 info attempt registry request try #2 at 16:44:57
+25 http request GET http://repo.dev.wix/artifactory/api/npm/npm-repos/http-server
+26 info retry will retry, error on last attempt: Error: getaddrinfo ENOTFOUND
+27 info attempt registry request try #3 at 16:45:57
+28 http request GET http://repo.dev.wix/artifactory/api/npm/npm-repos/http-server
+29 verbose stack Error: getaddrinfo ENOTFOUND
+29 verbose stack     at errnoException (dns.js:37:11)
+29 verbose stack     at Object.onanswer [as oncomplete] (dns.js:124:16)
+30 verbose cwd /home/j/Desktop/portfolio/weather
+31 error Linux 3.16.0-45-generic
+32 error argv "node" "/usr/local/bin/npm" "install" "http-server" "-g"
+33 error node v0.10.25
+34 error npm  v2.13.3
+35 error code ENOTFOUND
+36 error errno ENOTFOUND
+37 error syscall getaddrinfo
+38 error network getaddrinfo ENOTFOUND
+38 error network This is most likely not a problem with npm itself
+38 error network and is related to network connectivity.
+38 error network In most cases you are behind a proxy or have bad network settings.
+38 error network
+38 error network If you are behind a proxy, please make sure that the
+38 error network 'proxy' config is set properly.  See: 'npm help config'
+39 verbose exit [ 1, true ]

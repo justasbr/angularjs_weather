@@ -62,11 +62,24 @@ div.weather {
   margin: 0 auto;
 }
 
-.cityInputBtn {
+.city-input-button {
   margin-top: 2px;
   width: 100%;
 }
 
-map {
-  height: 250px;
+/*.angular-google-map-container {*/
+/*height: 400px;*/
+/*}*/
+
+body, html {
+  height: 100%;
+  width: 100%;
+}
+
+.angular-google-map-container {
+  -webkit-transition: height .5s; /* Safari */
+  transition: height .5s;
+  height: 0px;
+  width: 100%;
+  position: relative;
 }
