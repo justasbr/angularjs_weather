@@ -17,9 +17,14 @@ div {
   color: blue;
 }
 
-.weatherDay {
+.weather-day-outer {
+  /*height: 250px;*/
+  padding: 0;
+}
+
+.weather-day-inner {
   border: 1px solid;
-  height: 250px;
+  margin: 5px;
 }
 
 .weather {
